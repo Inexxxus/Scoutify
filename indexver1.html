@@ -6,141 +6,41 @@
   <title>Scoutly — Local Business Finder</title>
 
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="" crossorigin=""/>
-  <!-- MarkerCluster CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
 
-  <style>
-    :root{
-      --bg:#0f1724;
-      --card:#0b1220;
-      --accent1:#7c5cff;
-      --accent2:#00d4ff;
-      --glass: rgba(255,255,255,0.04);
-      --muted: #9aa4b2;
-      --success: #34d399;
-      --danger: #fb7185;
-      --max-width: 1200px;
-      --radius: 12px;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-    *{box-sizing:border-box}
-    html,body,#app{height:100%;margin:0;background:linear-gradient(180deg,var(--bg) 0%, #071020 100%);color:#e6eef8}
-    .wrap{max-width:var(--max-width);margin:18px auto;display:grid;grid-template-columns:360px 1fr;gap:18px;padding:18px}
-    .panel{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:var(--radius); padding:14px;
-      box-shadow: 0 6px 30px rgba(2,6,23,0.6); border:1px solid rgba(255,255,255,0.03);
-    }
-
-    /* Header */
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{
-      width:44px;height:44px;border-radius:10px;
-      background:linear-gradient(135deg,var(--accent1),var(--accent2));
-      display:flex;align-items:center;justify-content:center;font-weight:700;color:#071026;font-size:20px;box-shadow:0 6px 18px rgba(124,92,255,0.18);
-    }
-    h1{font-size:18px;margin:0}
-    p.lead{color:var(--muted);margin:6px 0 12px;font-size:13px}
-
-    /* controls */
-    .controls{display:flex;flex-direction:column;gap:10px}
-    .row{display:flex;gap:8px}
-    .btn{
-      background:linear-gradient(90deg,var(--accent1),var(--accent2));
-      border:none;color:#051027;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:600;
-      box-shadow:0 6px 16px rgba(0,0,0,0.35);
-    }
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);box-shadow:none;font-weight:600}
-    .input, .select {
-      background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color:inherit;
-      padding:8px 10px;border-radius:8px; width:100%;
-    }
-
-    /* category chips */
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:6px 10px;border-radius:999px;background:var(--glass);color:var(--muted);cursor:pointer;border:1px solid rgba(255,255,255,0.02);font-size:13px}
-    .chip.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#071026;border:none;font-weight:700}
-
-    /* list */
-    .list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:52vh;overflow:auto;padding-right:6px}
-    .item{
-      display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));
-      border:1px solid rgba(255,255,255,0.02);
-    }
-    .pin{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#071026;background:#fff}
-    .meta{flex:1}
-    .meta h4{margin:0;font-size:14px}
-    .meta p{margin:4px 0 0;color:var(--muted);font-size:13px}
-
-    .actions{display:flex;gap:8px}
-    .small{padding:6px 8px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:var(--muted);cursor:pointer}
-
-    /* map */
-    #map{width:100%;height:78vh;border-radius:var(--radius);overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
-    .bottom-row{display:flex;gap:10px;margin-top:12px;align-items:center}
-
-    /* modal */
-    .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.7);z-index:9999}
-    .modal{width:420px;background:#071026;padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
-    .modal h3{margin:0 0 10px}
-    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
-    .field label{font-size:13px;color:var(--muted)}
-    .field input, .field select, .field textarea{background:#021024;border:1px solid rgba(255,255,255,0.03);color:#e6eef8;padding:8px;border-radius:8px}
-    textarea{min-height:80px;resize:vertical}
-
-    /* responsive */
-    @media (max-width:980px){
-      .wrap{grid-template-columns:1fr; padding:12px}
-      #map{height:60vh}
-    }
-
-    /* marker legend */
-    .legend{display:flex;gap:8px;align-items:center;font-size:13px}
-    .dot{width:12px;height:12px;border-radius:50%}
-    .dot.food{background:linear-gradient(90deg,#ff8a00,#ff3d00)}
-    .dot.coffee{background:linear-gradient(90deg,#b388ff,#7c5cff)}
-    .dot.shop{background:linear-gradient(90deg,#00d4ff,#0066ff)}
-    .dot.service{background:linear-gradient(90deg,#34d399,#059669)}
-  </style>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="app">
     <div class="wrap">
-      <!-- LEFT PANEL -->
       <div class="panel">
         <div class="brand">
           <div class="logo">S</div>
           <div>
             <h1>Scoutly</h1>
-            <p class="lead">Find local businesses near you — filter, add, and save favorites.</p>
+            <p class="lead">Search by name, province, or barangay — e.g. "Pampanga"</p>
           </div>
         </div>
 
-        <div class="controls" style="margin-top:10px">
+        <div class="controls">
           <div class="row">
-            <input id="searchInput" class="input" placeholder="Search by name or address..." />
-            <button id="geoBtn" class="btn" title="Go to my location">📍</button>
+            <input id="searchInput" class="input" placeholder="Search businesses..." />
+            <button id="clearSearch" class="btn ghost" title="Clear">✖</button>
           </div>
 
-          <div style="margin-top:8px" class="chips" id="categoryChips">
-            <!-- chips inserted by JS -->
+          <div id="categoryChips" class="chips"></div>
+
+          <div class="legend">
+            <span class="dot food"></span> Food
+            <span class="dot coffee"></span> Coffee
+            <span class="dot shop"></span> Shops
+            <span class="dot service"></span> Services
           </div>
 
-          <div class="bottom-row" style="margin-top:10px">
-            <div class="legend">
-              <span class="dot food"></span> Food
-              <span style="width:8px"></span>
-              <span class="dot coffee"></span> Coffee
-              <span style="width:8px"></span>
-              <span class="dot shop"></span> Shops
-              <span style="width:8px"></span>
-              <span class="dot service"></span> Services
-            </div>
-          </div>
-
-          <div style="display:flex;gap:8px;margin-top:10px">
+          <div class="row">
             <button id="addBtn" class="btn">+ Add Business</button>
             <button id="exportBtn" class="btn ghost">Export</button>
             <button id="importBtn" class="btn ghost">Import</button>
@@ -148,34 +48,25 @@
           </div>
         </div>
 
-        <div class="list" id="listPanel" style="margin-top:12px">
-          <!-- items populated by JS -->
-        </div>
+        <div id="listPanel" class="list"></div>
       </div>
 
-      <!-- RIGHT (MAP) -->
-      <div class="panel" style="padding:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="display:flex;align-items:center;gap:8px">
-            <strong style="font-size:15px">Map</strong>
-            <div style="margin-left:8px;color:var(--muted);font-size:13px">Interactive · Click markers for details</div>
-          </div>
-          <div>
-            <select id="viewSelect" class="select" style="width:160px">
-              <option value="all">All businesses</option>
-              <option value="favorites">Favorites</option>
-            </select>
-          </div>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <strong>Map</strong>
+          <select id="viewSelect" class="select">
+            <option value="all">All businesses</option>
+            <option value="favorites">Favorites</option>
+          </select>
         </div>
-
         <div id="map"></div>
       </div>
     </div>
   </div>
 
-  <!-- Modal add business -->
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal" role="dialog" aria-modal="true">
+  <!-- Modal -->
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="modal">
       <h3>Add New Business</h3>
       <div class="field"><label>Name</label><input id="b_name" /></div>
       <div class="field"><label>Category</label>
@@ -187,15 +78,17 @@
         </select>
       </div>
       <div class="field"><label>Address</label><input id="b_address" /></div>
+      <div class="field"><label>Province</label><input id="b_province" /></div>
+      <div class="field"><label>Barangay</label><input id="b_barangay" /></div>
       <div class="field"><label>Latitude, Longitude</label>
-        <div style="display:flex;gap:8px">
+        <div class="row">
           <input id="b_lat" placeholder="lat" />
           <input id="b_lng" placeholder="lng" />
-          <button id="locHere" class="small" style="background:#0b1220;color:#e6eef8;border-radius:8px">Use map center</button>
+          <button id="locHere" class="small">Use map center</button>
         </div>
       </div>
       <div class="field"><label>Notes</label><textarea id="b_notes"></textarea></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
+      <div class="row" style="justify-content:flex-end">
         <button id="cancelAdd" class="btn ghost">Cancel</button>
         <button id="saveAdd" class="btn">Save</button>
       </div>
@@ -205,297 +98,7 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-  <script>
-    /*******************************
-     * Scoutly — Local Business Finder
-     *******************************/
-
-    // sample data (will be merged with localStorage entries)
-    const SAMPLE = [
-      { id: 1, name: "Sunset Diner", category: "Food", lat: 14.5873, lng: 121.0644, address: "140 Sunset Ave", notes: "Family-friendly, late hours" },
-      { id: 2, name: "Brew & Beans", category: "Coffee", lat: 14.5890, lng: 121.0627, address: "12 Brew St", notes: "Specialty espresso" },
-      { id: 3, name: "Green Mart", category: "Shop", lat: 14.5862, lng: 121.0689, address: "Market Road", notes: "Groceries & produce" },
-      { id: 4, name: "QuickFix Repairs", category: "Service", lat: 14.5901, lng: 121.0605, address: "45 Repair Ln", notes: "Phone & laptop repair" },
-      { id: 5, name: "Cozy Corner Cafe", category: "Coffee", lat: 14.5848, lng: 121.0652, address: "Corner Plaza", notes: "Cozy seating, free WiFi" },
-      { id: 6, name: "Taste of Asia", category: "Food", lat: 14.5932, lng: 121.0660, address: "Asian Market", notes: "Best noodles in town" }
-    ];
-
-    // app state
-    let stored = JSON.parse(localStorage.getItem('scoutly_businesses') || 'null');
-    let businesses = Array.isArray(stored) ? [...SAMPLE, ...stored] : SAMPLE.slice();
-    // keep unique ids for new entries
-    let NEXT_ID = Math.max(...businesses.map(b=>b.id)) + 1;
-
-    // map & markers
-    let map = L.map('map', { zoomControl: true }).setView([14.5873, 121.0644], 14);
-
-    // OpenStreetMap tile
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    // marker cluster group
-    const markers = L.markerClusterGroup();
-    map.addLayer(markers);
-
-    // category colors / icons
-    function iconFor(category) {
-      let color;
-      switch (category) {
-        case 'Food': color = 'linear-gradient(90deg,#ff8a00,#ff3d00)'; break;
-        case 'Coffee': color = 'linear-gradient(90deg,#b388ff,#7c5cff)'; break;
-        case 'Shop': color = 'linear-gradient(90deg,#00d4ff,#0066ff)'; break;
-        case 'Service': color = 'linear-gradient(90deg,#34d399,#059669)'; break;
-        default: color = 'linear-gradient(90deg,#9ca3af,#6b7280)';
-      }
-      // create a simple div icon with colored circle
-      const el = document.createElement('div');
-      el.style.width = '28px';
-      el.style.height = '36px';
-      el.style.display = 'flex';
-      el.style.alignItems = 'center';
-      el.style.justifyContent = 'center';
-      el.style.borderRadius = '8px';
-      el.style.background = color;
-      el.style.boxShadow = '0 4px 10px rgba(2,6,23,0.4)';
-      el.style.color = '#fff';
-      el.style.fontWeight = '700';
-      el.style.fontSize = '12px';
-      el.textContent = category[0];
-      return L.divIcon({ className: '', html: el.outerHTML, iconSize: [28,36], iconAnchor: [14,36], popupAnchor: [0,-36] });
-    }
-
-    // render markers and list based on filter/search
-    let currentCategory = 'All';
-    let searchTerm = '';
-    let showFavorites = false;
-    const favorites = new Set(JSON.parse(localStorage.getItem('scoutly_favs') || '[]'));
-
-    function saveBusinesses() {
-      // only save user-added businesses (ids >= NEXT_ID start), but easier: save all minus SAMPLE by name
-      const userAdded = businesses.filter(b => !SAMPLE.some(s => s.name === b.name && s.lat === b.lat && s.lng === b.lng));
-      localStorage.setItem('scoutly_businesses', JSON.stringify(userAdded));
-    }
-
-    function renderAll() {
-      markers.clearLayers();
-      const list = document.getElementById('listPanel');
-      list.innerHTML = '';
-
-      const filtered = businesses.filter(b => {
-        if (currentCategory !== 'All' && b.category !== currentCategory) return false;
-        if (showFavorites && !favorites.has(b.id)) return false;
-        const txt = (b.name + ' ' + (b.address||'') + ' ' + (b.notes||'')).toLowerCase();
-        if (searchTerm && !txt.includes(searchTerm.toLowerCase())) return false;
-        return true;
-      });
-
-      filtered.forEach(b => {
-        const m = L.marker([b.lat, b.lng], { icon: iconFor(b.category) });
-        const popupHtml =
-          `<div style="min-width:180px">
-            <strong style="font-size:15px">${escapeHtml(b.name)}</strong><br/>
-            <small style="color:#9aa4b2">${escapeHtml(b.category)} • ${escapeHtml(b.address||'')}</small>
-            <p style="margin:8px 0;color:#b9c5d4">${escapeHtml(b.notes||'')}</p>
-            <div style="display:flex;gap:8px">
-              <button id="btnFav${b.id}" style="padding:6px 8px;border-radius:8px;border:none;background:linear-gradient(90deg,#7c5cff,#00d4ff);color:#071026;cursor:pointer">Fav</button>
-              <button id="btnDir${b.id}" style="padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef8;cursor:pointer">Directions</button>
-            </div>
-          </div>`;
-
-        m.bindPopup(popupHtml);
-        m.on('popupopen', () => {
-          // wire popup buttons
-          const favBtn = document.getElementById('btnFav' + b.id);
-          if (favBtn) {
-            favBtn.textContent = favorites.has(b.id) ? '★ Fav' : '☆ Fav';
-            favBtn.onclick = () => {
-              if (favorites.has(b.id)) favorites.delete(b.id); else favorites.add(b.id);
-              localStorage.setItem('scoutly_favs', JSON.stringify(Array.from(favorites)));
-              renderAll();
-            };
-          }
-          const dirBtn = document.getElementById('btnDir' + b.id);
-          if (dirBtn) {
-            dirBtn.onclick = () => {
-              const q = encodeURIComponent(b.lat + ',' + b.lng);
-              const url = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
-              window.open(url, '_blank');
-            };
-          }
-        });
-
-        markers.addLayer(m);
-
-        // list entry
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `
-          <div class="pin" style="background:${colorFor(b.category)}">${b.name[0]}</div>
-          <div class="meta">
-            <h4>${escapeHtml(b.name)} ${favorites.has(b.id) ? '★' : ''}</h4>
-            <p>${escapeHtml(b.category)} · ${escapeHtml(b.address||'')}</p>
-          </div>
-          <div class="actions">
-            <button class="small" data-id="${b.id}" title="Zoom">Zoom</button>
-            <button class="small" data-id="${b.id}" title="Fav">${favorites.has(b.id) ? 'Unfav' : 'Fav'}</button>
-          </div>
-        `;
-        // zoom button
-        div.querySelectorAll('.small')[0].addEventListener('click', () => {
-          map.setView([b.lat, b.lng], 17, { animate: true });
-        });
-        // fav button
-        div.querySelectorAll('.small')[1].addEventListener('click', () => {
-          if (favorites.has(b.id)) favorites.delete(b.id); else favorites.add(b.id);
-          localStorage.setItem('scoutly_favs', JSON.stringify(Array.from(favorites)));
-          renderAll();
-        });
-
-        list.appendChild(div);
-      });
-
-      // center map to fit markers
-      if (filtered.length) {
-        const group = L.featureGroup(filtered.map(b => L.marker([b.lat, b.lng])));
-        map.fitBounds(group.getBounds().pad(0.15));
-      }
-    }
-
-    // small helper color for list icon (non-gradient)
-    function colorFor(cat) {
-      switch(cat){
-        case 'Food': return '#ff6b2e';
-        case 'Coffee': return '#7c5cff';
-        case 'Shop': return '#00a8ff';
-        case 'Service': return '#10b981';
-        default: return '#9ca3af';
-      }
-    }
-
-    // UI wiring
-    const categorySet = ['All','Food','Coffee','Shop','Service'];
-    const chipsEl = document.getElementById('categoryChips');
-    categorySet.forEach(c => {
-      const el = document.createElement('div');
-      el.className = 'chip' + (c==='All' ? ' active' : '');
-      el.textContent = c;
-      el.addEventListener('click', () => {
-        document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
-        el.classList.add('active');
-        currentCategory = c === 'All' ? 'All' : c;
-        renderAll();
-      });
-      chipsEl.appendChild(el);
-    });
-
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      searchTerm = e.target.value.trim();
-      renderAll();
-    });
-
-    document.getElementById('viewSelect').addEventListener('change', (e) => {
-      showFavorites = e.target.value === 'favorites';
-      renderAll();
-    });
-
-    // Add new business modal
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    document.getElementById('addBtn').addEventListener('click', () => {
-      modalBackdrop.style.display = 'flex';
-    });
-    document.getElementById('cancelAdd').addEventListener('click', () => modalBackdrop.style.display = 'none');
-    document.getElementById('locHere').addEventListener('click', (e) => {
-      e.preventDefault();
-      const center = map.getCenter();
-      document.getElementById('b_lat').value = center.lat.toFixed(6);
-      document.getElementById('b_lng').value = center.lng.toFixed(6);
-    });
-
-    document.getElementById('saveAdd').addEventListener('click', () => {
-      const name = document.getElementById('b_name').value.trim();
-      const category = document.getElementById('b_category').value;
-      const address = document.getElementById('b_address').value.trim();
-      const lat = parseFloat(document.getElementById('b_lat').value);
-      const lng = parseFloat(document.getElementById('b_lng').value);
-      const notes = document.getElementById('b_notes').value.trim();
-      if(!name || !category || isNaN(lat) || isNaN(lng)) {
-        alert('Name, category and valid coordinates are required. Use "Use map center" to fill coordinates.');
-        return;
-      }
-      const newB = { id: NEXT_ID++, name, category, address, lat, lng, notes };
-      businesses.push(newB);
-      saveBusinesses();
-      modalBackdrop.style.display = 'none';
-      // clear form
-      ['b_name','b_address','b_lat','b_lng','b_notes'].forEach(id => document.getElementById(id).value = '');
-      renderAll();
-    });
-
-    // export/import
-    document.getElementById('exportBtn').addEventListener('click', () => {
-      const payload = { exportedAt: new Date().toISOString(), businesses, favorites: Array.from(favorites) };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'scoutly-businesses.json';
-      document.body.appendChild(a); a.click(); a.remove();
-    });
-
-    document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
-    document.getElementById('importFile').addEventListener('change', (e) => {
-      const f = e.target.files[0];
-      if(!f) return;
-      const r = new FileReader();
-      r.onload = () => {
-        try {
-          const parsed = JSON.parse(r.result);
-          if (parsed.businesses && Array.isArray(parsed.businesses)) {
-            // merge but avoid duplicate by coords+name
-            parsed.businesses.forEach(pb => {
-              const exists = businesses.some(b => b.name === pb.name && b.lat === pb.lat && b.lng === pb.lng);
-              if(!exists) businesses.push(pb);
-            });
-            // merge favorites
-            if (Array.isArray(parsed.favorites)) {
-              parsed.favorites.forEach(id => favorites.add(id));
-              localStorage.setItem('scoutly_favs', JSON.stringify(Array.from(favorites)));
-            }
-            saveBusinesses();
-            renderAll();
-            alert('Import complete');
-          } else {
-            alert('Invalid import file.');
-          }
-        } catch (err) {
-          alert('Error reading file.');
-        }
-      };
-      r.readAsText(f);
-      e.target.value = '';
-    });
-
-    // geolocation center
-    document.getElementById('geoBtn').addEventListener('click', () => {
-      if (!navigator.geolocation) return alert('Geolocation not supported.');
-      navigator.geolocation.getCurrentPosition(pos => {
-        map.setView([pos.coords.latitude, pos.coords.longitude], 15);
-      }, err => alert('Unable to get location: ' + (err.message || err.code)));
-    });
-
-    // helper escape
-    function escapeHtml(s){ return (s||'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-    // initial render
-    renderAll();
-
-    // ensure markers re-render when map moves (so cluster picks correct)
-    map.on('moveend', () => {
-      // markers are already in marker cluster; no op
-    });
-
-  </script>
+  <!-- Custom JS -->
+  <script src="script.js"></script>
 </body>
 </html>

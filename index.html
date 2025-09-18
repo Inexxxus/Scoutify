@@ -3,68 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Scoutly — Local Business Finder (Place-aware Search)</title>
+  <title>Scoutly — Local Business Finder</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
 
-  <style>
-    :root{
-      --bg:#0f1724; --accent1:#7c5cff; --accent2:#00d4ff; --muted:#9aa4b2; --card:#071026;
-      --radius:12px;
-    }
-    *{box-sizing:border-box}
-    html,body,#app{height:100%;margin:0;background:linear-gradient(180deg,var(--bg) 0%, #071020 100%);color:#e6eef8;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    .wrap{max-width:1200px;margin:18px auto;display:grid;grid-template-columns:360px 1fr;gap:18px;padding:18px}
-    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:14px;border:1px solid rgba(255,255,255,0.03)}
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#071026;font-size:20px}
-    h1{font-size:18px;margin:0}
-    p.lead{color:var(--muted);margin:6px 0 12px;font-size:13px}
-    .controls{display:flex;flex-direction:column;gap:10px}
-    .row{display:flex;gap:8px}
-    .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;color:#071026;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700}
-    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600}
-    .input, .select {background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color:inherit; padding:8px 10px;border-radius:8px; width:100%}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);color:var(--muted);cursor:pointer;border:1px solid rgba(255,255,255,0.02);font-size:13px}
-    .chip.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#071026;border:none;font-weight:700}
-    .list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:52vh;overflow:auto;padding-right:6px}
-    .item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.02)}
-    .pin{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#071026;background:#fff}
-    .meta{flex:1}
-    .meta h4{margin:0;font-size:14px}
-    .meta p{margin:4px 0 0;color:var(--muted);font-size:13px}
-    .actions{display:flex;gap:8px}
-    .small{padding:6px 8px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:var(--muted);cursor:pointer}
-    #map{width:100%;height:78vh;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
-    .bottom-row{display:flex;gap:10px;margin-top:12px;align-items:center}
-    .modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.7);z-index:9999}
-    .modal{width:420px;background:#071026;padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.04)}
-    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
-    textarea{min-height:80px;resize:vertical}
-    @media (max-width:980px){.wrap{grid-template-columns:1fr;padding:12px}#map{height:60vh}}
-    .legend{display:flex;gap:8px;align-items:center;font-size:13px}
-    .dot{width:12px;height:12px;border-radius:50%}
-    .dot.food{background:linear-gradient(90deg,#ff8a00,#ff3d00)}
-    .dot.coffee{background:linear-gradient(90deg,#b388ff,#7c5cff)}
-    .dot.shop{background:linear-gradient(90deg,#00d4ff,#0066ff)}
-    .dot.service{background:linear-gradient(90deg,#34d399,#059669)}
-
-    /* highlighted marker bounce (applied to marker element) */
-    .marker-highlight {
-      transform-origin: center bottom !important;
-      animation: bounce 700ms ease;
-      box-shadow:0 8px 24px rgba(0,0,0,0.35) !important;
-    }
-    @keyframes bounce {
-      0% { transform: translateY(0) scale(1); }
-      40% { transform: translateY(-12px) scale(1.06); }
-      100% { transform: translateY(0) scale(1); }
-    }
-  </style>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="app">
@@ -74,31 +21,26 @@
           <div class="logo">S</div>
           <div>
             <h1>Scoutly</h1>
-            <p class="lead">Search businesses by name, address, province, or barangay — type "Pampanga" to see matches.</p>
+            <p class="lead">Search by name, province, or barangay — e.g. "Pampanga"</p>
           </div>
         </div>
 
-        <div class="controls" style="margin-top:10px">
+        <div class="controls">
           <div class="row">
-            <input id="searchInput" class="input" placeholder="Search name / address / province / barangay..." />
+            <input id="searchInput" class="input" placeholder="Search businesses..." />
             <button id="clearSearch" class="btn ghost" title="Clear">✖</button>
           </div>
 
-          <div style="margin-top:8px" class="chips" id="categoryChips"></div>
+          <div id="categoryChips" class="chips"></div>
 
-          <div class="bottom-row" style="margin-top:10px">
-            <div class="legend">
-              <span class="dot food"></span> Food
-              <span style="width:8px"></span>
-              <span class="dot coffee"></span> Coffee
-              <span style="width:8px"></span>
-              <span class="dot shop"></span> Shops
-              <span style="width:8px"></span>
-              <span class="dot service"></span> Services
-            </div>
+          <div class="legend">
+            <span class="dot food"></span> Food
+            <span class="dot coffee"></span> Coffee
+            <span class="dot shop"></span> Shops
+            <span class="dot service"></span> Services
           </div>
 
-          <div style="display:flex;gap:8px;margin-top:10px">
+          <div class="row">
             <button id="addBtn" class="btn">+ Add Business</button>
             <button id="exportBtn" class="btn ghost">Export</button>
             <button id="importBtn" class="btn ghost">Import</button>
@@ -106,31 +48,25 @@
           </div>
         </div>
 
-        <div class="list" id="listPanel" style="margin-top:12px"></div>
+        <div id="listPanel" class="list"></div>
       </div>
 
-      <div class="panel" style="padding:12px;">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="display:flex;align-items:center;gap:8px">
-            <strong style="font-size:15px">Map</strong>
-            <div style="margin-left:8px;color:var(--muted);font-size:13px">Type a province (e.g. Pampanga) to show all branches.</div>
-          </div>
-          <div>
-            <select id="viewSelect" class="select" style="width:160px">
-              <option value="all">All businesses</option>
-              <option value="favorites">Favorites</option>
-            </select>
-          </div>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <strong>Map</strong>
+          <select id="viewSelect" class="select">
+            <option value="all">All businesses</option>
+            <option value="favorites">Favorites</option>
+          </select>
         </div>
-
         <div id="map"></div>
       </div>
     </div>
   </div>
 
-  <!-- Modal add business -->
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal" role="dialog" aria-modal="true">
+  <!-- Modal -->
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="modal">
       <h3>Add New Business</h3>
       <div class="field"><label>Name</label><input id="b_name" /></div>
       <div class="field"><label>Category</label>
@@ -142,17 +78,17 @@
         </select>
       </div>
       <div class="field"><label>Address</label><input id="b_address" /></div>
-      <div class="field"><label>Province</label><input id="b_province" placeholder="e.g. Pampanga" /></div>
-      <div class="field"><label>Barangay</label><input id="b_barangay" placeholder="e.g. Barangay 1" /></div>
+      <div class="field"><label>Province</label><input id="b_province" /></div>
+      <div class="field"><label>Barangay</label><input id="b_barangay" /></div>
       <div class="field"><label>Latitude, Longitude</label>
-        <div style="display:flex;gap:8px">
+        <div class="row">
           <input id="b_lat" placeholder="lat" />
           <input id="b_lng" placeholder="lng" />
-          <button id="locHere" class="small" style="background:#0b1220;color:#e6eef8;border-radius:8px">Use map center</button>
+          <button id="locHere" class="small">Use map center</button>
         </div>
       </div>
       <div class="field"><label>Notes</label><textarea id="b_notes"></textarea></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
+      <div class="row" style="justify-content:flex-end">
         <button id="cancelAdd" class="btn ghost">Cancel</button>
         <button id="saveAdd" class="btn">Save</button>
       </div>
@@ -162,321 +98,7 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-  <script>
-  /***** Scoutly - Place-aware search version *****/
-
-  // sample with province & barangay
-  const SAMPLE = [
-    { id: 1, name: "Sunset Diner", category: "Food", lat: 14.5873, lng: 121.0644, address: "140 Sunset Ave", province: "Pampanga", barangay: "Barangay 1", notes: "Family-friendly, late hours" },
-    { id: 2, name: "Brew & Beans", category: "Coffee", lat: 14.5890, lng: 121.0627, address: "12 Brew St", province: "Pampanga", barangay: "Barangay 2", notes: "Specialty espresso" },
-    { id: 3, name: "Green Mart", category: "Shop", lat: 14.5862, lng: 121.0689, address: "Market Road", province: "Bulacan", barangay: "Central", notes: "Groceries & produce" },
-    { id: 4, name: "QuickFix Repairs", category: "Service", lat: 14.5901, lng: 121.0605, address: "45 Repair Ln", province: "Pampanga", barangay: "Barangay 3", notes: "Phone & laptop repair" },
-    { id: 5, name: "Cozy Corner Cafe", category: "Coffee", lat: 14.5848, lng: 121.0652, address: "Corner Plaza", province: "Pampanga", barangay: "Barangay 1", notes: "Cozy seating, free WiFi" },
-    { id: 6, name: "Taste of Asia", category: "Food", lat: 14.5932, lng: 121.0660, address: "Asian Market", province: "Bulacan", barangay: "Market", notes: "Best noodles in town" },
-    // multiple branches example (Tom N Toms in Pampanga)
-    { id: 7, name: "Tom N Toms Angeles", category: "Coffee", lat: 15.1429, lng: 120.5880, address: "Aguinaldo Highway", province: "Pampanga", barangay: "Balibago", notes: "Tom N Toms - Angeles branch" },
-    { id: 8, name: "Tom N Toms CS", category: "Coffee", lat: 15.1290, lng: 120.5885, address: "San Fernando Rd", province: "Pampanga", barangay: "San Fernando", notes: "Tom N Toms - San Fernando branch" }
-  ];
-
-  // load stored, keep SAMPLE and saved
-  let stored = JSON.parse(localStorage.getItem('scoutly_businesses') || 'null');
-  let businesses = Array.isArray(stored) ? [...SAMPLE, ...stored] : SAMPLE.slice();
-  let NEXT_ID = Math.max(...businesses.map(b=>b.id)) + 1;
-
-  // favorites
-  const favorites = new Set(JSON.parse(localStorage.getItem('scoutly_favs') || '[]'));
-
-  // map
-  const map = L.map('map', { zoomControl:true }).setView([14.5873, 121.0644], 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-  const markers = L.markerClusterGroup();
-  map.addLayer(markers);
-
-  // marker creation: two icon types: normal and highlighted
-  function divIconFor(category, highlighted=false){
-    let color;
-    switch(category){
-      case 'Food': color = highlighted ? 'linear-gradient(90deg,#ff9a4a,#ff5a3a)' : 'linear-gradient(90deg,#ff8a00,#ff3d00)'; break;
-      case 'Coffee': color = highlighted ? 'linear-gradient(90deg,#d0b8ff,#a186ff)' : 'linear-gradient(90deg,#b388ff,#7c5cff)'; break;
-      case 'Shop': color = highlighted ? 'linear-gradient(90deg,#66ecff,#00b4ff)' : 'linear-gradient(90deg,#00d4ff,#0066ff)'; break;
-      case 'Service': color = highlighted ? 'linear-gradient(90deg,#7ef0bd,#32d48b)' : 'linear-gradient(90deg,#34d399,#059669)'; break;
-      default: color = 'linear-gradient(90deg,#9ca3af,#6b7280)';
-    }
-    const size = highlighted ? 36 : 28;
-    const el = document.createElement('div');
-    el.style.width = size + 'px';
-    el.style.height = (size+6) + 'px';
-    el.style.display = 'flex';
-    el.style.alignItems = 'center';
-    el.style.justifyContent = 'center';
-    el.style.borderRadius = '8px';
-    el.style.background = color;
-    el.style.color = '#071026';
-    el.style.fontWeight = '700';
-    el.style.fontSize = '12px';
-    el.style.boxShadow = '0 6px 14px rgba(2,6,23,0.4)';
-    el.textContent = category[0] || 'B';
-    return L.divIcon({ className:'', html:el.outerHTML, iconSize:[size, size+6], iconAnchor:[size/2, size+6], popupAnchor:[0,-(size+6)] });
-  }
-
-  // state for rendered marker references
-  const markerMap = new Map(); // id -> marker
-
-  function saveBusinesses(){
-    const userAdded = businesses.filter(b => !SAMPLE.some(s => s.name===b.name && s.lat===b.lat && s.lng===b.lng));
-    localStorage.setItem('scoutly_businesses', JSON.stringify(userAdded));
-  }
-
-  // place-aware search helper
-  function matchesSearch(b, q){
-    if(!q) return true;
-    q = q.trim().toLowerCase();
-    // tokens allow multi-word search
-    const tokens = q.split(/\s+/).filter(Boolean);
-    // fields to search
-    const hay = ((b.name||'') + ' ' + (b.address||'') + ' ' + (b.notes||'') + ' ' + (b.province||'') + ' ' + (b.barangay||'')).toLowerCase();
-    // match if every token appears in hay OR token equals province or barangay (handle commony typed province names)
-    return tokens.every(t => hay.includes(t));
-  }
-
-  // reset highlight classes on all marker elements
-  function clearMarkerHighlights(){
-    markerMap.forEach(m => {
-      const el = m.getElement();
-      if(el) el.classList.remove('marker-highlight');
-    });
-  }
-
-  function renderAll(){
-    markers.clearLayers();
-    markerMap.clear();
-    const list = document.getElementById('listPanel');
-    list.innerHTML = '';
-
-    // read filters
-    const chipActive = document.querySelector('.chip.active');
-    const categoryFilter = chipActive ? chipActive.textContent : 'All';
-    const viewVal = document.getElementById('viewSelect').value;
-    const search = document.getElementById('searchInput').value.trim();
-
-    // filter
-    const filtered = businesses.filter(b => {
-      if(categoryFilter !== 'All' && b.category !== categoryFilter) return false;
-      if(viewVal === 'favorites' && !favorites.has(b.id)) return false;
-      if(!matchesSearch(b, search)) return false;
-      return true;
-    });
-
-    // if no results and search looks like a province (single token) try fuzzy province match: include if province contains
-    if(filtered.length === 0 && search){
-      const maybeProv = search.toLowerCase();
-      const alt = businesses.filter(b => (b.province||'').toLowerCase().includes(maybeProv) || (b.barangay||'').toLowerCase().includes(maybeProv));
-      if(alt.length) {
-        // use alt as results
-        filtered.push(...alt);
-      }
-    }
-
-    // draw markers & list
-    filtered.forEach(b => {
-      const m = L.marker([b.lat, b.lng], { icon: divIconFor(b.category, false) });
-      const popupHtml = `
-        <div style="min-width:200px">
-          <strong style="font-size:15px">${escapeHtml(b.name)}</strong><br/>
-          <small style="color:${'#9aa4b2'}">${escapeHtml(b.category)} • ${escapeHtml(b.address||'')} ${b.province ? '· '+escapeHtml(b.province) : ''} ${b.barangay ? '· '+escapeHtml(b.barangay):''}</small>
-          <p style="margin:8px 0;color:#b9c5d4">${escapeHtml(b.notes||'')}</p>
-          <div style="display:flex;gap:8px">
-            <button id="fav${b.id}" style="padding:6px 8px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#071026;cursor:pointer">${favorites.has(b.id)?'★ Fav':'☆ Fav'}</button>
-            <button id="dir${b.id}" style="padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e6eef8;cursor:pointer">Directions</button>
-          </div>
-        </div>
-      `;
-      m.bindPopup(popupHtml);
-      // store marker reference
-      markerMap.set(b.id, m);
-      markers.addLayer(m);
-      // list item
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.innerHTML = `
-        <div class="pin" style="background:${colorFor(b.category)}">${EscapeInitial(b.name)}</div>
-        <div class="meta">
-          <h4>${escapeHtml(b.name)} ${favorites.has(b.id) ? '★' : ''}</h4>
-          <p>${escapeHtml(b.category)} · ${escapeHtml(b.address||'')} ${b.province ? '· '+escapeHtml(b.province):''}</p>
-        </div>
-        <div class="actions">
-          <button class="small" data-id="${b.id}" title="Zoom">Zoom</button>
-          <button class="small" data-id="${b.id}" title="Fav">${favorites.has(b.id)?'Unfav':'Fav'}</button>
-        </div>
-      `;
-      // wiring
-      div.querySelectorAll('.small')[0].addEventListener('click', () => {
-        map.setView([b.lat, b.lng], 16, { animate:true });
-        // open popup after slight delay
-        setTimeout(()=> markerMap.get(b.id).openPopup(), 350);
-      });
-      div.querySelectorAll('.small')[1].addEventListener('click', () => {
-        if(favorites.has(b.id)) favorites.delete(b.id); else favorites.add(b.id);
-        localStorage.setItem('scoutly_favs', JSON.stringify(Array.from(favorites)));
-        renderAll();
-      });
-      list.appendChild(div);
-    });
-
-    // If we have results, fit bounds and highlight
-    if(filtered.length){
-      const group = L.featureGroup(filtered.map(b=> L.marker([b.lat, b.lng]) ));
-      map.fitBounds(group.getBounds().pad(0.12));
-      // highlight markers corresponding to filtered set (add highlight CSS & bigger icon)
-      clearMarkerHighlights();
-      filtered.forEach(b=>{
-        const m = markerMap.get(b.id);
-        if(!m) return;
-        // replace icon with highlighted version
-        m.setIcon(divIconFor(b.category, true));
-        const el = m.getElement();
-        if(el) {
-          el.classList.add('marker-highlight');
-          // remove highlight after animation to keep UI tidy
-          setTimeout(()=> { if(el) el.classList.remove('marker-highlight'); }, 900);
-        }
-      });
-      // if exactly one result, open popup and bounce
-      if(filtered.length === 1){
-        const only = filtered[0];
-        const mk = markerMap.get(only.id);
-        if(mk){
-          mk.openPopup();
-          const el = mk.getElement();
-          if(el){ el.classList.add('marker-highlight'); setTimeout(()=> el.classList.remove('marker-highlight'), 900); }
-        }
-      }
-    } else {
-      // if no results, optionally zoom back to default bounds
-      // do nothing (user sees empty list)
-    }
-  }
-
-  // color for list pin (non-gradient)
-  function colorFor(cat){
-    switch(cat){
-      case 'Food': return '#ff6b2e';
-      case 'Coffee': return '#7c5cff';
-      case 'Shop': return '#00a8ff';
-      case 'Service': return '#10b981';
-      default: return '#9ca3af';
-    }
-  }
-  function EscapeInitial(s){ return (s||'').charAt(0).toUpperCase(); }
-
-  // build category chips
-  const categories = ['All','Food','Coffee','Shop','Service'];
-  const chipsEl = document.getElementById('categoryChips');
-  categories.forEach(c => {
-    const chip = document.createElement('div');
-    chip.className = 'chip' + (c==='All' ? ' active' : '');
-    chip.textContent = c;
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
-      chip.classList.add('active');
-      renderAll();
-    });
-    chipsEl.appendChild(chip);
-  });
-
-  // search wiring (place-aware)
-  const searchInput = document.getElementById('searchInput');
-  const clearBtn = document.getElementById('clearSearch');
-  let searchTimer = null;
-  function triggerSearch(){
-    // If token looks like a province, auto-match (handled in renderAll fallback)
-    renderAll();
-  }
-  searchInput.addEventListener('input', () => {
-    if(searchTimer) clearTimeout(searchTimer);
-    searchTimer = setTimeout(triggerSearch, 250);
-  });
-  clearBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    renderAll();
-  });
-
-  // add modal wiring
-  const modalBackdrop = document.getElementById('modalBackdrop');
-  document.getElementById('addBtn').addEventListener('click', () => modalBackdrop.style.display = 'flex');
-  document.getElementById('cancelAdd').addEventListener('click', ()=> modalBackdrop.style.display = 'none');
-  document.getElementById('locHere').addEventListener('click', (e) => {
-    e.preventDefault();
-    const center = map.getCenter();
-    document.getElementById('b_lat').value = center.lat.toFixed(6);
-    document.getElementById('b_lng').value = center.lng.toFixed(6);
-  });
-
-  document.getElementById('saveAdd').addEventListener('click', () => {
-    const name = document.getElementById('b_name').value.trim();
-    const category = document.getElementById('b_category').value;
-    const address = document.getElementById('b_address').value.trim();
-    const province = document.getElementById('b_province').value.trim();
-    const barangay = document.getElementById('b_barangay').value.trim();
-    const lat = parseFloat(document.getElementById('b_lat').value);
-    const lng = parseFloat(document.getElementById('b_lng').value);
-    const notes = document.getElementById('b_notes').value.trim();
-    if(!name || !category || isNaN(lat) || isNaN(lng)){
-      alert('Name, category and valid coordinates required. Use "Use map center" to fill coords.');
-      return;
-    }
-    const newB = { id: NEXT_ID++, name, category, address, province, barangay, lat, lng, notes };
-    businesses.push(newB);
-    saveBusinesses();
-    modalBackdrop.style.display = 'none';
-    ['b_name','b_address','b_province','b_barangay','b_lat','b_lng','b_notes'].forEach(id=>document.getElementById(id).value='');
-    renderAll();
-  });
-
-  // export/import
-  document.getElementById('exportBtn').addEventListener('click', () => {
-    const payload = { exportedAt: new Date().toISOString(), businesses, favorites: Array.from(favorites) };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = 'scoutly-businesses.json'; document.body.appendChild(a); a.click(); a.remove();
-  });
-  document.getElementById('importBtn').addEventListener('click', ()=> document.getElementById('importFile').click());
-  document.getElementById('importFile').addEventListener('change', (e) => {
-    const f = e.target.files[0]; if(!f) return;
-    const r = new FileReader();
-    r.onload = () => {
-      try {
-        const parsed = JSON.parse(r.result);
-        if(parsed.businesses && Array.isArray(parsed.businesses)){
-          parsed.businesses.forEach(pb=>{
-            const exists = businesses.some(b => b.name===pb.name && Math.abs(b.lat - pb.lat)<0.0001 && Math.abs(b.lng - pb.lng)<0.0001);
-            if(!exists) businesses.push(pb);
-          });
-          if(Array.isArray(parsed.favorites)) { parsed.favorites.forEach(id => favorites.add(id)); localStorage.setItem('scoutly_favs', JSON.stringify(Array.from(favorites))); }
-          saveBusinesses(); renderAll(); alert('Import complete');
-        } else alert('Invalid file');
-      } catch (err) { alert('Error reading file'); }
-    };
-    r.readAsText(f); e.target.value='';
-  });
-
-  // geolocation center (double click)
-  // (optional) add a small map center button? Already not required.
-  // initial render
-  renderAll();
-
-  // helper
-  function escapeHtml(s){ return (s||'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-  // ensure marker cluster updates on window resize
-  window.addEventListener('resize', ()=> { setTimeout(()=> renderAll(), 200); });
-
-  // allow pressing Enter in search to zoom-to results immediately
-  searchInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') { renderAll(); } });
-
-  // expose for debugging if needed
-  window.scoutly = { businesses, renderAll };
-  </script>
+  <!-- Custom JS -->
+  <script src="script.js"></script>
 </body>
 </html>
